@@ -2,13 +2,9 @@
 > Thead-safe Least Frequently Used (LFU) cache replacement policy implementation with O(1) complexity
 
 [![Build Status](https://travis-ci.org/ZhengHe-MD/lfu.svg?branch=master)](https://travis-ci.org/ZhengHe-MD/lfu)
-
 [![Go Report Card](https://goreportcard.com/badge/github.com/ZhengHe-MD/lfu)](https://goreportcard.com/report/github.com/ZhengHe-MD/lfu)
-
 [![Coverage Status](https://coveralls.io/repos/github/ZhengHe-MD/lfu/badge.svg?branch=master)](https://coveralls.io/github/ZhengHe-MD/lfu?branch=master)
-
 [![godoc](https://godoc.org/github.com/ZhengHe-MD/lfu?status.svg)](https://godoc.org/github.com/ZhengHe-MD/lfu)
-
 ![GitHub release](https://img.shields.io/github/release-pre/ZhengHe-MD/lfu.svg)
 
 ## Usages
