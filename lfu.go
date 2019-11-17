@@ -5,6 +5,7 @@ import (
 	"sync"
 )
 
+// LFU interface defines the operations that an lfu implementation should support
 type LFU interface {
 	Set(k string, v interface{})
 	Get(k string) (v interface{}, ok bool)
@@ -12,6 +13,8 @@ type LFU interface {
 	Size() int
 }
 
+// New create a new lfu-cache that support the LFU interface. The cap parameter
+// specifies the capacity of the LFU cache
 func New(cap int) LFU {
 	return &cache{
 		cap:      cap,
@@ -43,6 +46,9 @@ type freqNode struct {
 	items map[*kvItem]interface{}
 }
 
+// Set stores the given kv pair. If the cache has seen k before, the corresponding
+// v will be updated and the frequency count be incremented. If the cache has never
+// seen k before and full, the least frequently used k,v will be evicted.
 func (c *cache) Set(k string, v interface{}) {
 	if c.cap > 0 && len(c.kv) >= c.cap {
 		c.Evict(1)
@@ -88,6 +94,7 @@ func (c *cache) Set(k string, v interface{}) {
 	return
 }
 
+// Get returns the v related to k. The ok indicates whether it is found in cache.
 func (c *cache) Get(k string) (vv interface{}, ok bool) {
 	c.Lock()
 	defer c.Unlock()
@@ -103,6 +110,7 @@ func (c *cache) Get(k string) (vv interface{}, ok bool) {
 	return
 }
 
+// Evict evicts given number of items out of cache.
 func (c *cache) Evict(n int) {
 	c.Lock()
 	defer c.Unlock()
@@ -121,7 +129,7 @@ func (c *cache) Evict(n int) {
 		front := c.freqList.Front()
 		frontNode := front.Value.(*freqNode)
 
-		for item, _ := range frontNode.items {
+		for item := range frontNode.items {
 			delete(c.kv, item.k)
 			delete(frontNode.items, item)
 			i += 1
@@ -137,6 +145,7 @@ func (c *cache) Evict(n int) {
 	return
 }
 
+// Size returns the number of items in cache
 func (c *cache) Size() int {
 	c.Lock()
 	defer c.Unlock()
