@@ -14,19 +14,19 @@ capacity = 10
 // create a new LFU cache with capacity
 // if capacity is set to non-positive integer
 // the cache won't do any eviction
-lfu := lfu.New(capacity)
+cache := lfu.New(capacity)
 
 // set k, v
-lfu.Set("k1", "v1")
+cache.Set("k1", "v1")
 
 // get v for k
-v, ok := lfu.Get("k1")
+v, ok := cache.Get("k1")
 
 // evict certain number of items
-lfu.Evict(1)
+cache.Evict(1)
 
 // get current size of lfu
-size := lfu.Size()
+size := cache.Size()
 ```
 
 ## References

@@ -7,31 +7,37 @@ import (
 )
 
 func TestLFU(t *testing.T) {
-	lfu := New(2)
+	cache := New(2)
 
-	lfu.Set("a", 1)
-	lfu.Set("b", 2)
-	v, ok := lfu.Get("a")
+	cache.Set("a", 1)
+	assert.Equal(t, 1, cache.Size())
+	cache.Set("b", 2)
+	assert.Equal(t, 2, cache.Size())
+	v, ok := cache.Get("a")
 	assert.True(t, ok)
 	assert.Equal(t, 1, v)
-	lfu.Evict(1)
-	v, ok = lfu.Get("a")
+	cache.Evict(1)
+	v, ok = cache.Get("a")
 	assert.True(t, ok)
 	assert.Equal(t, 1, v)
-	v, ok = lfu.Get("b")
+	v, ok = cache.Get("b")
 	assert.False(t, ok)
 	assert.Nil(t, v)
-	lfu.Set("c", 3)
-	v, ok = lfu.Get("c")
+	cache.Set("c", 3)
+	assert.Equal(t, 2, cache.Size())
+	v, ok = cache.Get("c")
 	assert.True(t, ok)
 	assert.Equal(t, 3, v)
-	lfu.Set("d", 4)
-	v, ok = lfu.Get("c")
+	cache.Set("d", 4)
+	assert.Equal(t, 2, cache.Size())
+	v, ok = cache.Get("c")
 	assert.False(t, ok)
 	assert.Nil(t, v)
-	v, ok = lfu.Get("d")
+	v, ok = cache.Get("d")
 	assert.True(t, ok)
 	assert.Equal(t, 4, v)
+	cache.Evict(10)
+	assert.Equal(t, 0, cache.Size())
 }
 
 func TestCache_Set(t *testing.T) {
@@ -181,4 +187,22 @@ func TestCache_Evict(t *testing.T) {
 	cache.Evict(3)
 	assert.Equal(t, 0, len(cache.kv))
 	assert.Equal(t, 0, cache.freqList.Len())
+}
+
+func TestCache_Size(t *testing.T) {
+	cache := &cache{
+		kv:       make(map[string]*kvItem),
+		freqList: list.New(),
+	}
+
+	assert.Equal(t, 0, cache.Size())
+
+	cache.Set("a", 1)
+	assert.Equal(t, 1, cache.Size())
+
+	cache.Set("b", 1)
+	assert.Equal(t, 2, cache.Size())
+
+	cache.Evict(10)
+	assert.Equal(t, 0, cache.Size())
 }
