@@ -175,4 +175,3 @@ func (c *cache) increment(item *kvItem) {
 
 	return
 }
-
